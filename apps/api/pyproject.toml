@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.116,<1.0",
   "httpx>=0.28,<1.0",
-  "langgraph>=0.6,<1.0",
+  "langgraph>=1.0.10,<2.0",
   "mcp>=1.13,<2.0",
   "pymupdf>=1.26,<2.0",
   "pypdf>=6.0,<7.0",
