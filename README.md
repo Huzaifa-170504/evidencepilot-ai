@@ -4,8 +4,19 @@
 
 [![CI](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/ci.yml)
 [![Security](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/security.yml/badge.svg)](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/security.yml)
+[![Pages](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/pages.yml/badge.svg)](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/pages.yml)
+[![Deployment smoke test](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/deployment-smoke.yml/badge.svg)](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/deployment-smoke.yml)
 
 EvidencePilot AI is an agentic research intelligence platform built by **Huzaifa Waqar Butt**. It turns a question and optional private PDFs into a traceable technical report using conditional LangGraph agents, function tools, MCP, hybrid PDF RAG, pgvector, memory, criticism, claim verification, and a professional recruiter-facing dashboard.
+
+## Live project
+
+- Dashboard: <https://huzaifa-170504.github.io/evidencepilot-ai/>
+- API home: <https://evidencepilot-ai.onrender.com/>
+- Health: <https://evidencepilot-ai.onrender.com/health>
+- Swagger / OpenAPI: <https://evidencepilot-ai.onrender.com/docs>
+
+The Render free service can take approximately one minute to wake. The browser keeps a clearly labelled cached Mamba-YOLO snapshot available during a cold start.
 
 ## What it demonstrates
 
@@ -15,7 +26,7 @@ EvidencePilot AI is an agentic research intelligence platform built by **Huzaifa
 - PDF signature/page/encryption/checksum validation with page-aware PyMuPDF parsing
 - PostgreSQL full-text search + pgvector cosine search + reciprocal-rank fusion
 - Stable source IDs, page citations, claim verdicts, limitations, and exports
-- arXiv, Crossref, optional Tavily, optional Gemini, and deterministic free fallback
+- arXiv and Crossref tool adapters, optional Gemini/Tavily provider seams, and a deterministic free release
 - Read-only `evidencepilot-research-tools` MCP server
 - 25-question evaluation dataset, 90%+ backend coverage, CI/CD, Pages, and Render descriptors
 
@@ -31,7 +42,7 @@ flowchart TD
     Verify --> Export["Export Markdown or PDF"]
 ```
 
-The cached Mamba-YOLO workspace works without an account or provider key. Authenticated users can create persistent projects and upload PDFs after public Supabase configuration and the backend URL are configured.
+The cached Mamba-YOLO workspace works without an account or provider key. The production build is connected to Render and the public Supabase project; authenticated users can create persistent projects and upload private PDFs.
 
 ## Architecture
 
@@ -64,7 +75,7 @@ Open:
 - API docs: <http://localhost:8000/docs>
 - Health: <http://localhost:8000/health>
 
-The cached demo requires no key. For Auth and PDF uploads, set the Supabase URL/publishable key in frontend and backend variables. Never expose `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `TAVILY_API_KEY`, or `DATABASE_URL` in a `VITE_*` variable.
+The cached demo requires no key. Local Auth and PDF uploads require the Supabase URL/publishable key in `.env`. Never expose `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `TAVILY_API_KEY`, or `DATABASE_URL` in a `VITE_*` variable.
 
 ## Validate
 
@@ -93,24 +104,19 @@ packages/*/               Extractable package boundaries
 supabase/migrations/      Schema, pgvector, RLS, Storage, hardening
 supabase/seed/            Public recruiter seed
 evals/                    Dataset, runner, baseline result
+scripts/                  Public deployment smoke verification
 docs/                     Architecture, RAG, database, security, deployment
 render.yaml               Render Blueprint
-.github/workflows/        CI, security, GitHub Pages deployment
+.github/workflows/        CI, security, Pages, deployment smoke test
 ```
 
-## Deployment status and owner steps
+## Deployment status
 
-The Supabase schema, RLS, Storage bucket, pgvector, Realtime, seed, and generated TypeScript types are provisioned for project `dsbxndbbpryisxevjjgc`.
+GitHub Pages, the Render API, and Supabase project `dsbxndbbpryisxevjjgc` are provisioned. The database contains 16 application tables with RLS enabled on all 16, pgvector, a private PDF bucket, Realtime publication, and hardened policies. The Supabase security advisor reports no findings.
 
-Account-level deployment still requires:
+Production-safe frontend defaults contain only public identifiers and may be overridden with GitHub repository variables for forks. Backend secrets remain in Render.
 
-1. Create a Render Blueprint from `render.yaml` and add backend secrets.
-2. Add GitHub repository variables `VITE_API_BASE_URL`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_PUBLISHABLE_KEY`.
-3. Select **GitHub Actions** under repository Settings → Pages.
-4. Add the final Pages URL to Supabase Auth URL configuration.
-5. Optionally configure free Gemini/Tavily keys and enable live provider mode.
-
-Connecting the GitHub repository inside Supabase is optional; environment variables and version-controlled migrations are the actual application connection.
+The released public research graph is deterministic for stable, zero-cost recruiter testing. Gemini/Tavily adapters are extension seams and should not be described as active live research until separately integrated and evaluated.
 
 ## Documentation
 
@@ -123,6 +129,7 @@ Connecting the GitHub repository inside Supabase is optional; environment variab
 - [Security](docs/security.md)
 - [Deployment](docs/deployment.md)
 - [Recruiter demo](docs/demo-guide.md)
+- [Changelog](CHANGELOG.md)
 
 ## Security and privacy
 
@@ -130,4 +137,4 @@ Upload only public or non-sensitive documents to the demo. Retrieved PDFs and we
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).

@@ -28,6 +28,7 @@ Thumbs.db
 data/
 uploads/
 reports/
+output/
 *.log
 
 # The frontend snapshot is source code, not runtime data.
