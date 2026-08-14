@@ -1,0 +1,27 @@
+{
+  "name": "evidencepilot-ai",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Evidence-first agentic research intelligence platform",
+  "author": "Huzaifa Waqar Butt",
+  "license": "MIT",
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm-run-all --parallel api dev:web",
+    "api": "uv run --directory apps/api uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:web": "npm run dev --workspace @evidencepilot/web",
+    "build:web": "npm run build --workspace @evidencepilot/web",
+    "test:web": "npm run test --workspace @evidencepilot/web",
+    "lint:web": "npm run lint --workspace @evidencepilot/web",
+    "format:web": "npm run format --workspace @evidencepilot/web"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  }
+}
