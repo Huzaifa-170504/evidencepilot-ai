@@ -40,6 +40,8 @@ Set the site URL to the GitHub Pages URL and add both the Pages URL and `http://
 The `Deployment smoke test` workflow automatically runs after a successful Pages deployment and weekly. It verifies:
 
 - frontend HTTP response and repository base path;
+- compiled Render/Supabase public configuration with no secret/JWT token;
+- API home links;
 - Render health and CORS;
 - readiness with Supabase storage;
 - demo sources, claims, and report;

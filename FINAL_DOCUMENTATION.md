@@ -350,7 +350,7 @@ The automated suite covers:
 - npm and Python dependency audits;
 - 25 version-controlled evaluation questions.
 
-The `Deployment smoke test` workflow wakes and verifies the public Render service, CORS, readiness, demo API, Swagger UI, and GitHub Pages after deployment.
+The `Deployment smoke test` workflow wakes and verifies the public Render service, API home links, CORS, readiness, demo API, Swagger UI, GitHub Pages, compiled public configuration, and absence of secret/JWT tokens after deployment.
 
 ## 15. Requirements completion matrix
 
