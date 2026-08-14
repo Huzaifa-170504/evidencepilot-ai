@@ -2,10 +2,11 @@ import { createDemoRun, demoRun } from "../data/demo";
 import type { ApiResult, ResearchRequest, ResearchRun } from "../types/research";
 import type { Project, ResearchDocument, SavedMemory } from "../types/research";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000").replace(
-  /\/$/,
-  "",
-);
+const productionApiUrl = "https://evidencepilot-ai.onrender.com";
+const configuredApiUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const API_BASE_URL = (
+  configuredApiUrl || (import.meta.env.PROD ? productionApiUrl : "http://localhost:8000")
+).replace(/\/$/, "");
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {

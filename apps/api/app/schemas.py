@@ -245,6 +245,16 @@ class ApiMessage(BaseModel):
     message: str
 
 
+class ApiRootResponse(BaseModel):
+    service: str
+    status: str
+    version: str
+    documentation: str
+    health: str
+    readiness: str
+    api_prefix: str
+
+
 class HealthResponse(BaseModel):
     status: str
     service: str

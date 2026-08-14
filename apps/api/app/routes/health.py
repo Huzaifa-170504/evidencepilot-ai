@@ -1,9 +1,23 @@
 from fastapi import APIRouter
 
 from app.config import get_settings
-from app.schemas import HealthResponse, ReadyResponse
+from app.schemas import ApiRootResponse, HealthResponse, ReadyResponse
 
 router = APIRouter(tags=["system"])
+
+
+@router.get("/", response_model=ApiRootResponse, include_in_schema=False)
+def root() -> ApiRootResponse:
+    settings = get_settings()
+    return ApiRootResponse(
+        service=settings.app_name,
+        status="healthy",
+        version=settings.app_version,
+        documentation="/docs",
+        health="/health",
+        readiness="/ready",
+        api_prefix=settings.api_prefix,
+    )
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -24,7 +38,8 @@ def ready() -> ReadyResponse:
         ready=True,
         dependencies={
             "demo_workflow": "ready" if settings.demo_mode else "disabled",
-            "database": "planned-phase-2",
-            "model_provider": "planned-phase-4",
+            "database": "supabase" if settings.supabase_enabled else "in-memory",
+            "document_storage": "supabase-private" if settings.supabase_enabled else "local-test",
+            "model_provider": settings.provider_mode,
         },
     )
