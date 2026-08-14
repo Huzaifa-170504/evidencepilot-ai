@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: evidencepilot-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: ./apps/api
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DEMO_MODE
+        value: "true"
+      - key: LIVE_RESEARCH_ENABLED
+        value: "false"
+      - key: FRONTEND_ORIGINS
+        value: https://huzaifa-170504.github.io
+      - key: SUPABASE_URL
+        value: https://dsbxndbbpryisxevjjgc.supabase.co
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: LLM_PROVIDER
+        value: deterministic
+      - key: EMBEDDING_PROVIDER
+        value: hashing

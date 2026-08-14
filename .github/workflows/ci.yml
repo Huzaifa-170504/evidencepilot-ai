@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  api:
+    name: API
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --directory apps/api --all-groups --frozen
+      - name: Lint
+        run: uv run --directory apps/api ruff check .
+      - name: Format check
+        run: uv run --directory apps/api ruff format --check .
+      - name: Test
+        run: uv run --directory apps/api pytest
+      - name: Evaluate orchestration contracts
+        run: uv run --directory apps/api python ../../evals/runners/evaluate_contracts.py
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint:web
+      - name: Test
+        run: npm run test:web
+      - name: Build
+        run: npm run build:web
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
