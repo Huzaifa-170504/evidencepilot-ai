@@ -23,7 +23,8 @@ def test_demo_run_is_complete_and_evidence_linked() -> None:
     assert payload["metrics"]["agents_executed"] == 6
     assert cited_ids <= source_ids
     assert any(task["status"] == "skipped" for task in payload["plan"])
-    assert "Phase 1" in payload["report_markdown"]
+    assert "Bibliography" in payload["report_markdown"]
+    assert payload["selected_agents"][-1] == "Report"
 
 
 def test_research_question_validation() -> None:

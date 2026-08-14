@@ -20,18 +20,26 @@ export function SourceList({ sources }: SourceListProps) {
       <div className="source-list">
         {sources.map((source) => {
           const Icon = source.source_type === "repository" ? GitBranch : BookOpen;
-          return (
-            <a href={source.url} target="_blank" rel="noreferrer" className="source" key={source.id}>
+          const content = (
+            <>
               <span className="source-icon" aria-hidden="true">
                 <Icon size={17} />
               </span>
               <span className="source-copy">
                 <strong>{source.title}</strong>
                 <small>
-                  {source.publisher} · {source.year} · {source.id}
+                  {source.publisher} · {source.year} · {source.page_number ? `page ${source.page_number} · ` : ""}{source.id}
                 </small>
               </span>
-              <ArrowUpRight size={16} aria-hidden="true" />
+              {source.url && <ArrowUpRight size={16} aria-hidden="true" />}
+            </>
+          );
+          if (!source.url) {
+            return <article className="source" key={source.id}>{content}</article>;
+          }
+          return (
+            <a href={source.url} target="_blank" rel="noreferrer" className="source" key={source.id}>
+              {content}
             </a>
           );
         })}

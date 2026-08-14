@@ -14,8 +14,8 @@
 
 ## Configuration
 
-Copy `.env.example` to `.env`. Phase 1 uses only `VITE_API_BASE_URL`, `FRONTEND_ORIGINS`, and `DEMO_MODE`. All provider variables are placeholders for later phases.
+Copy `.env.example` to `.env`. The cached recruiter demo needs only `VITE_API_BASE_URL`, `FRONTEND_ORIGINS`, and `DEMO_MODE`. Supabase public values enable Auth/uploads; backend-only provider keys enable live model and web research.
 
 ## Design principle
 
-The mock service is not temporary UI decoration. It is a contract test double: future orchestration must satisfy the same response schema so the interface and evaluation harness do not depend on a specific LLM or framework.
+The deterministic provider is a production fallback and contract test double. Live orchestration satisfies the same response schema, so the interface and evaluation harness do not depend on one LLM or provider.

@@ -12,7 +12,7 @@ def test_health_exposes_versioned_service_status() -> None:
     assert response.json() == {
         "status": "healthy",
         "service": "EvidencePilot AI API",
-        "version": "0.1.0",
+        "version": "1.0.0",
         "environment": "development",
     }
 

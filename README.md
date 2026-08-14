@@ -2,114 +2,132 @@
 
 > Evidence-first research by coordinated AI agents.
 
-EvidencePilot AI is an agentic research intelligence platform that turns a research question and optional documents into a traceable technical report. It is designed as a visible AI research department: a supervisor plans the work, specialist agents gather evidence, a critic challenges coverage, a fact checker verifies claims, and a report agent produces a referenced deliverable.
+[![CI](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/ci.yml)
+[![Security](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/security.yml/badge.svg)](https://github.com/Huzaifa-170504/evidencepilot-ai/actions/workflows/security.yml)
 
-This repository is being built by **Huzaifa Waqar Butt** as a production-minded portfolio project covering multi-agent orchestration, tool calling, MCP, PDF RAG, hybrid retrieval, vector databases, memory, evaluation, and deployment.
+EvidencePilot AI is an agentic research intelligence platform built by **Huzaifa Waqar Butt**. It turns a question and optional private PDFs into a traceable technical report using conditional LangGraph agents, function tools, MCP, hybrid PDF RAG, pgvector, memory, criticism, claim verification, and a professional recruiter-facing dashboard.
 
-## Phase 1 foundation
+## What it demonstrates
 
-The current foundation includes:
+- Supervisor, Academic, Web, Document, Data Analyst, Critic, Fact Checker, and Report contracts
+- Conditional orchestration with fixed budgets and safe event traces
+- Supabase Auth, PostgreSQL, private Storage, Realtime, pgvector, and hardened RLS
+- PDF signature/page/encryption/checksum validation with page-aware PyMuPDF parsing
+- PostgreSQL full-text search + pgvector cosine search + reciprocal-rank fusion
+- Stable source IDs, page citations, claim verdicts, limitations, and exports
+- arXiv, Crossref, optional Tavily, optional Gemini, and deterministic free fallback
+- Read-only `evidencepilot-research-tools` MCP server
+- 25-question evaluation dataset, 90%+ backend coverage, CI/CD, Pages, and Render descriptors
 
-- React, TypeScript, Vite, and a responsive research dashboard.
-- Python 3.12, FastAPI, typed schemas, CORS, and versioned API routes.
-- A deterministic mock research workflow with supervisor, specialist, critic, fact-checker, and report stages.
-- Health/readiness endpoints and recruiter-friendly fallback demo data.
-- Frontend and backend unit tests, linting, formatting, Docker, and GitHub Actions CI.
-- Provider boundaries ready for Supabase, Gemini, Tavily, arXiv, Crossref, and MCP in later phases.
-
-No API key or paid service is needed for Phase 1.
-
-## Architecture
+## User flow
 
 ```mermaid
 flowchart TD
-    UI["React dashboard"] --> API["FastAPI"]
-    API --> GRAPH["Research workflow"]
-    GRAPH --> MOCK["Deterministic provider"]
-    GRAPH -. Phase 2 .-> DATA["Supabase + pgvector"]
-    GRAPH -. Later .-> TOOLS["Search + academic APIs + MCP"]
+    Project["Create project"] --> Upload["Optional private PDFs"]
+    Upload --> Question["Ask scoped question"]
+    Question --> Plan["Review supervisor plan"]
+    Plan --> Agents["Watch conditional agents"]
+    Agents --> Verify["Inspect sources and claims"]
+    Verify --> Export["Export Markdown or PDF"]
 ```
+
+The cached Mamba-YOLO workspace works without an account or provider key. Authenticated users can create persistent projects and upload PDFs after public Supabase configuration and the backend URL are configured.
+
+## Architecture
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, Supabase JS |
+| API | Python 3.12, FastAPI, Pydantic |
+| Orchestration | LangGraph |
+| Data | Supabase PostgreSQL, Auth, Storage, Realtime, pgvector |
+| RAG | PyMuPDF, pypdf, hashing/Gemini embeddings, FTS + vector RRF |
+| Tools | Tavily, arXiv, Crossref, MCP |
+| Hosting | GitHub Pages + Render Blueprint |
+| Quality | pytest, Ruff, Vitest, ESLint, GitHub Actions |
 
 ## Quick start
 
-### Prerequisites
-
-- Python 3.12+
-- Node.js 20+
-- npm 10+
-- [uv](https://docs.astral.sh/uv/)
-
-### Install
+Prerequisites: Python 3.12+, Node.js 20+, npm 10+, and [uv](https://docs.astral.sh/uv/).
 
 ```bash
+git clone https://github.com/Huzaifa-170504/evidencepilot-ai.git
+cd evidencepilot-ai
 cp .env.example .env
 make install
-```
-
-### Run both applications
-
-```bash
 make dev
 ```
 
 Open:
 
-- Dashboard: http://localhost:5173
-- API: http://localhost:8000
-- OpenAPI documentation: http://localhost:8000/docs
-- Health check: http://localhost:8000/health
+- Dashboard: <http://localhost:5173>
+- API docs: <http://localhost:8000/docs>
+- Health: <http://localhost:8000/health>
 
-### Validate
+The cached demo requires no key. For Auth and PDF uploads, set the Supabase URL/publishable key in frontend and backend variables. Never expose `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `TAVILY_API_KEY`, or `DATABASE_URL` in a `VITE_*` variable.
+
+## Validate
 
 ```bash
 make lint
 make test
 make build
+uv run --directory apps/api python ../../evals/runners/evaluate_contracts.py
 ```
 
-### Docker
+Current deterministic contract baseline:
 
-```bash
-cp .env.example .env
-docker compose up --build
+- 25 evaluation questions
+- Zero fabricated source identifiers
+- Correct Document/Data Analyst routing
+- Critic and Fact Checker included before full reports
+- Supabase security advisor: no findings
+
+## Repository map
+
+```text
+apps/web/                 React dashboard
+apps/api/                 FastAPI, LangGraph, RAG, providers, tests
+packages/mcp_server/      Read-only MCP server
+packages/*/               Extractable package boundaries
+supabase/migrations/      Schema, pgvector, RLS, Storage, hardening
+supabase/seed/            Public recruiter seed
+evals/                    Dataset, runner, baseline result
+docs/                     Architecture, RAG, database, security, deployment
+render.yaml               Render Blueprint
+.github/workflows/        CI, security, GitHub Pages deployment
 ```
 
-## API snapshot
+## Deployment status and owner steps
 
-| Method | Route | Purpose |
-|---|---|---|
-| `GET` | `/health` | Liveness and version |
-| `GET` | `/ready` | Dependency readiness |
-| `GET` | `/api/v1/demo` | Preloaded recruiter workspace |
-| `POST` | `/api/v1/research/demo` | Deterministic mock research run |
+The Supabase schema, RLS, Storage bucket, pgvector, Realtime, seed, and generated TypeScript types are provisioned for project `dsbxndbbpryisxevjjgc`.
 
-Example:
+Account-level deployment still requires:
 
-```bash
-curl -X POST http://localhost:8000/api/v1/research/demo \
-  -H "Content-Type: application/json" \
-  -d '{"question":"Compare Mamba architectures for object detection","depth":"standard"}'
-```
+1. Create a Render Blueprint from `render.yaml` and add backend secrets.
+2. Add GitHub repository variables `VITE_API_BASE_URL`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_PUBLISHABLE_KEY`.
+3. Select **GitHub Actions** under repository Settings → Pages.
+4. Add the final Pages URL to Supabase Auth URL configuration.
+5. Optionally configure free Gemini/Tavily keys and enable live provider mode.
 
-## Roadmap
+Connecting the GitHub repository inside Supabase is optional; environment variables and version-controlled migrations are the actual application connection.
 
-- **Phase 1:** application foundation and mock vertical slice.
-- **Phase 2:** Supabase Auth, PostgreSQL, Storage, pgvector, and Row Level Security.
-- **Phase 3:** PDF parsing, chunking, embeddings, hybrid retrieval, and page citations.
-- **Phase 4:** single live research-agent baseline and evaluation dataset.
-- **Phase 5:** conditional multi-agent orchestration, critique, and fact checking.
-- **Phase 6:** complete dashboard, report exports, and public Mamba-YOLO demo.
-- **Phase 7:** MCP tools and inspectable project memory.
-- **Phase 8:** security evaluation and production deployment.
+## Documentation
 
-See [`PROJECT_REQUIREMENTS.md`](PROJECT_REQUIREMENTS.md) for the complete specification and [`docs/architecture.md`](docs/architecture.md) for current design boundaries.
+- [Final technical documentation](FINAL_DOCUMENTATION.md)
+- [Product requirements](PROJECT_REQUIREMENTS.md)
+- [Architecture](docs/architecture.md)
+- [Agent contracts](docs/agent-contracts.md)
+- [RAG design](docs/rag-design.md)
+- [Database and RLS](docs/database.md)
+- [Security](docs/security.md)
+- [Deployment](docs/deployment.md)
+- [Recruiter demo](docs/demo-guide.md)
 
-## Security
+## Security and privacy
 
-Never commit real credentials. The browser receives only public configuration. Provider secrets and future Supabase service-role credentials remain backend-only. Public demo content must be non-sensitive.
-
-Please report security concerns using [`SECURITY.md`](SECURITY.md).
+Upload only public or non-sensitive documents to the demo. Retrieved PDFs and webpages are untrusted evidence, not agent instructions. The system stores concise events and rationale summaries rather than private chain-of-thought. See [SECURITY.md](SECURITY.md) for reporting guidance.
 
 ## License
 
-MIT License. See [`LICENSE`](LICENSE).
+MIT — see [LICENSE](LICENSE).

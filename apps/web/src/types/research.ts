@@ -22,9 +22,15 @@ export interface Source {
   id: string;
   title: string;
   source_type: string;
-  url: string;
+  url: string | null;
   publisher: string;
   year: number;
+  authors?: string[];
+  doi?: string | null;
+  arxiv_id?: string | null;
+  document_id?: string | null;
+  page_number?: number | null;
+  excerpt?: string | null;
 }
 
 export interface Claim {
@@ -33,6 +39,7 @@ export interface Claim {
   verdict: ClaimVerdict;
   confidence: number;
   source_ids: string[];
+  rationale?: string | null;
 }
 
 export interface RunMetrics {
@@ -56,6 +63,9 @@ export interface ResearchRun {
   metrics: RunMetrics;
   report_markdown: string;
   demo: boolean;
+  limitations?: string[];
+  selected_agents?: string[];
+  correlation_id?: string | null;
 }
 
 export interface ResearchRequest {
@@ -66,4 +76,43 @@ export interface ResearchRequest {
 export interface ApiResult {
   run: ResearchRun;
   connected: boolean;
+}
+
+export interface Project {
+  id: string;
+  owner_id: string;
+  name: string;
+  description: string;
+  is_public_demo: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type DocumentStatus = "uploaded" | "processing" | "ready" | "failed";
+
+export interface ResearchDocument {
+  id: string;
+  project_id: string;
+  owner_id: string;
+  filename: string;
+  storage_path: string;
+  mime_type: string;
+  size_bytes: number;
+  checksum_sha256: string | null;
+  page_count: number | null;
+  status: DocumentStatus;
+  processing_error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SavedMemory {
+  id: string;
+  project_id: string | null;
+  owner_id: string;
+  memory_type: string;
+  title: string;
+  content: string;
+  enabled: boolean;
+  created_at: string;
 }

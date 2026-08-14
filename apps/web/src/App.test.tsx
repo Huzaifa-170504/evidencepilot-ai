@@ -9,7 +9,8 @@ describe("EvidencePilot dashboard", () => {
 
     expect(screen.getByText("Direct a research department, not a chatbot.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Start research" })).toBeEnabled();
-    expect(screen.getByText("Agent activity")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Agent activity" })).toBeInTheDocument();
     expect(screen.getByText("Sources found")).toBeInTheDocument();
+    await screen.findByText(/API connected|Cached demo/);
   });
 });

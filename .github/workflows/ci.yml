@@ -26,6 +26,8 @@ jobs:
         run: uv run --directory apps/api ruff format --check .
       - name: Test
         run: uv run --directory apps/api pytest
+      - name: Evaluate orchestration contracts
+        run: uv run --directory apps/api python ../../evals/runners/evaluate_contracts.py
 
   web:
     name: Web
@@ -44,3 +46,5 @@ jobs:
         run: npm run test:web
       - name: Build
         run: npm run build:web
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high

@@ -1,0 +1,29 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv sync --directory apps/api --all-groups --frozen
+      - run: uv export --directory apps/api --frozen --no-hashes --no-dev > /tmp/evidencepilot-requirements.txt
+      - run: uvx pip-audit -r /tmp/evidencepilot-requirements.txt

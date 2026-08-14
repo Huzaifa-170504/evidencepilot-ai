@@ -29,3 +29,7 @@ data/
 uploads/
 reports/
 *.log
+
+# The frontend snapshot is source code, not runtime data.
+!apps/web/src/data/
+!apps/web/src/data/**
