@@ -25,5 +25,5 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv sync --directory apps/api --all-groups --frozen
-      - run: uv export --directory apps/api --frozen --no-hashes --no-dev > /tmp/evidencepilot-requirements.txt
+      - run: uv export --directory apps/api --frozen --no-hashes --no-dev --no-emit-project > /tmp/evidencepilot-requirements.txt
       - run: uvx pip-audit -r /tmp/evidencepilot-requirements.txt
