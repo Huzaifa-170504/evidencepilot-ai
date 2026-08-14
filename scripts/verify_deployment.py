@@ -7,10 +7,12 @@ the Python standard library so it can run from GitHub Actions without setup.
 from __future__ import annotations
 
 import json
+import re
 import time
 from collections.abc import Callable
 from typing import Any
 from urllib.error import HTTPError, URLError
+from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
 API_URL = "https://evidencepilot-ai.onrender.com"
@@ -66,6 +68,14 @@ def check_health() -> None:
     assert headers.get("access-control-allow-origin") == FRONTEND_ORIGIN
 
 
+def check_root() -> None:
+    payload, _ = json_endpoint("/")
+    assert payload["status"] == "healthy"
+    assert payload["documentation"] == "/docs"
+    assert payload["health"] == "/health"
+    assert payload["readiness"] == "/ready"
+
+
 def check_readiness() -> None:
     payload, _ = json_endpoint("/ready")
     assert payload["ready"] is True
@@ -92,10 +102,22 @@ def check_frontend() -> None:
     assert status == 200
     assert b"EvidencePilot AI" in body
     assert b"/evidencepilot-ai/assets/" in body
+    markup = body.decode("utf-8")
+    script_match = re.search(r'<script[^>]+src="([^"]+)"', markup)
+    assert script_match, "frontend JavaScript asset was not found"
+    asset_url = urljoin(FRONTEND_URL, script_match.group(1))
+    asset_status, _, asset = fetch(asset_url, accept="application/javascript")
+    assert asset_status == 200
+    assert API_URL.encode() in asset
+    assert b"https://dsbxndbbpryisxevjjgc.supabase.co" in asset
+    assert re.search(rb"sb_publishable_[A-Za-z0-9_-]{20,}", asset)
+    assert not re.search(rb"sb_secret_[A-Za-z0-9_-]{20,}", asset)
+    assert not re.search(rb"eyJ[A-Za-z0-9_-]{40,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}", asset)
 
 
 def main() -> None:
     wait_for("Render health and CORS", check_health, attempts=12, delay_seconds=10)
+    wait_for("API home links", check_root, attempts=3, delay_seconds=5)
     wait_for("Render readiness", check_readiness, attempts=3, delay_seconds=5)
     wait_for("public demo API", check_demo, attempts=3, delay_seconds=5)
     wait_for("OpenAPI documentation", check_docs, attempts=3, delay_seconds=5)
